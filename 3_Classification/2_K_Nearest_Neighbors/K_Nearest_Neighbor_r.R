@@ -1,11 +1,13 @@
+#K Nearest Neighbors
+
 #Classification Template
 
 #Importing the dataset
 dataset = read.csv('Social_Network_Ads_r.csv')
-dataset = dataset[, 3:5]
+dataset = dataset[3:5]
 
 #Encoding the target feature as factor
-dataset$Purchased = factor(data$Purchased, levels = c(0,1))
+dataset$Purchased = factor(dataset$Purchased, levels = c(0,1))
 
 
 #Splitting the dataset into the Training set and Test set
@@ -18,17 +20,17 @@ split = sample.split(dataset$Purchased, SplitRatio = 0.75)
 training_set = subset(dataset, split == TRUE)
 test_set = subset(dataset, split == FALSE)
 
-#Future Scaling (Euclidian distance)
+#Feature Scaling (Euclidian distance)
 
 training_set[-3] = scale(training_set[-3]) #all lines and columns 2 and 3
 test_set[-3] = scale(test_set[-3])
 
-#Fitting CLASSIFIER to the Training Set
-#CREATE YOUR CLASSIFIER
-
-
-#Predicting the Test set results
-y_pred  = predict(classifier, newdata= test_set[-3]) #return the predict probabilities from the user to buy a suv
+#Fitting K-NN to the Training Set and Predecting the Test set results
+library(class)
+y_pred  = knn(train = training_set[,-3],
+              test = test_set[,-3],
+              cl = training_set[,3],
+              k = 5)
 
 
 #Making the Confusion Matrix
@@ -41,9 +43,12 @@ X1 = seq(min(set[, 1]) - 1, max(set[, 1]) + 1, by = 0.01)
 X2 = seq(min(set[, 2]) - 1, max(set[, 2]) + 1, by = 0.01)
 grid_set = expand.grid(X1, X2)
 colnames(grid_set) = c('Age', 'EstimatedSalary')
-y_grid = predict(classifier,  newdata = grid_set)
+y_grid = knn(train = training_set[,-3],
+             test = grid_set,
+             cl = training_set[,3],
+             k = 5)
 plot(set[, -3],
-     main = 'Classifier (Training set)',
+     main = 'K-NN (Training set)',
      xlab = 'Age', ylab = 'Estimated Salary',
      xlim = range(X1), ylim = range(X2))
 contour(X1, X2, matrix(as.numeric(y_grid), length(X1), length(X2)), add = TRUE)
@@ -57,9 +62,12 @@ X1 = seq(min(set[, 1]) - 1, max(set[, 1]) + 1, by = 0.01)
 X2 = seq(min(set[, 2]) - 1, max(set[, 2]) + 1, by = 0.01)
 grid_set = expand.grid(X1, X2)
 colnames(grid_set) = c('Age', 'EstimatedSalary')
-y_grid = predict(classifier,  newdata = grid_set)
+y_grid = knn(train = training_set[,-3],
+             test = grid_set,
+             cl = training_set[,3],
+             k = 5)
 plot(set[, -3],
-     main = 'Classifier (Test set)',
+     main = 'K-NN (Test set)',
      xlab = 'Age', ylab = 'Estimated Salary',
      xlim = range(X1), ylim = range(X2))
 contour(X1, X2, matrix(as.numeric(y_grid), length(X1), length(X2)), add = TRUE)
